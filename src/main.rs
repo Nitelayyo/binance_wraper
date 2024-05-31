@@ -3,13 +3,18 @@ use reqwest;
 use serde::{Serialize, Deserialize};
 use serde_json::{to_string, from_str};
 
-#[tokio::main] // дозволяє асинхронність
-async fn main() {
-    let resp = match reqwest::get("https://api.binance.com/sapi/v1/convert/exchangeInfo").await {
-        Ok(resp) => resp.text().await.unwrap(),
-        Err(err) => panic!("Error: {}", err)
-    };
-    println!("{}", resp)
+#[tokio::main]
+async fn main -> Result<(), reqwest::Error> {
+    let resp = reqwest::Client::new()
+        .get("https://api.binance.com/sapi/v1/convert/exchangeInfo")
+        .send()
+        .await?
+        .text()
+        .await?;
+
+    println!("{:#?}", resp);
+    
+    Ok(())
 }
 
 //GET /api/v1/exchangeInfo
